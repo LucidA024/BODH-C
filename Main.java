@@ -1629,7 +1629,7 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
     }
 }
 
-public class BODH {
+class BODH {
     public static void main(String[] args) {
         new App();
     }

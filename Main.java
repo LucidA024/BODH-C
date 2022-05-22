@@ -25,7 +25,7 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
     JComboBox box1, box2;
 
     App(){
-        this.setTitle("BODH -C (Beta A013)");
+        this.setTitle("BODH -C (Beta A016)");
         this.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
@@ -153,6 +153,12 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 		else if (e.getSource()==ConsButt) {
 			ConsButt.setBackground(Color.decode("#7300f2"));
 		}
+		else if(e.getSource()==swapButt){
+			swapButt.setBackground(Color.decode("#7300f2"));
+		}
+		else if (e.getSource()==ConvertButt) {
+			ConvertButt.setBackground(Color.decode("#7300f2"));
+		}
     }
 
     @Override
@@ -233,6 +239,12 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
                 ConeD.setBackground(Color.decode("#36383f"));
             }
         }
+		else if(e.getSource()==swapButt){
+			swapButt.setBackground(Color.decode("#36383f"));
+		}
+		else if (e.getSource()==ConvertButt) {
+			ConvertButt.setBackground(Color.decode("#36383f"));
+		}
     }
 
     @Override
@@ -255,6 +267,12 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
         else if (e.getSource()==ConeD) {
             ConeD.setBounds(100+5+100+5+100+5,0,100,50);
         }
+		else if(e.getSource()==swapButt){
+			swapButt.setBounds(SCREEN_WIDTH-60-100-5-100-5-5,0,100,50);
+		}
+		else if (e.getSource()==ConvertButt) {
+			ConvertButt.setBounds(SCREEN_WIDTH-60-100-5-5,0,100,50);
+		}
     }
 
     @Override
@@ -277,7 +295,684 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
         else if (e.getSource()==ConeD) {
             ConeD.setBounds(5+100+5+100+5+100+5,10,100,30);
         }
+		else if(e.getSource()==swapButt){
+			swapButt.setBounds(SCREEN_WIDTH-60-100-5-100-5,7,100,30);
+		}
+		else if (e.getSource()==ConvertButt) {
+			ConvertButt.setBounds(SCREEN_WIDTH-60-100-5,7,100,30);
+		}
     }
+
+	public void translate(){
+		if(valx==1 && valy==2){
+			String s = txt.getText();
+			byte[] bytes = s.getBytes();
+			StringBuilder binary = new StringBuilder();
+			for (byte b : bytes){
+				int val = b;
+				for(int i = 0;i<8;i++){
+					binary.append((val & 128)==0 ? 0 : 1);
+					val <<= 1;
+				}
+				binary.append(' ');
+			}
+			bnry.setText(""+binary+"");
+		}
+		else if(valx==2 && valy==1){
+				String input = bnry.getText();
+				
+				String raw = Arrays.stream(input.split(" "))
+					.map(binary -> Integer.parseInt(binary, 2))
+					.map(Character::toString)
+					.collect(Collectors.joining()); // cut the space
+				txt.setText(""+raw+"");		
+		}	
+	}
+
+	public void convv(){
+		NTXT.setText("");
+		if(box1.getSelectedItem()==box2.getSelectedItem()){
+			NTXT.setText("Converting to itself is equals to itself!");
+			
+		}
+		else if(box1.getSelectedItem()=="Decimal" && box2.getSelectedItem()=="Binary"){//Decimal to Binary
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				String binary = Integer.toBinaryString(val);
+				NTXT.append("d\t|q\t|r");
+				
+				int d = val*2;
+				int q = val;
+				int r = 0;
+				int eQ = 0;
+				
+				while(q>1){
+					d = d/2;
+					r = q%2;
+					q = q/2;
+					NTXT.append("\n"+d + "/2\t|" + q + "\t|" + r );
+					eQ = q;
+				}
+				NTXT.append("\n\t\t|"+eQ);
+				NTXT.append("\nDecimal: " +val);
+				NTXT.append("\nBinary: " + binary);										
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
+			}
+		}
+		//Decimal to Octal
+		else if(box1.getSelectedItem()=="Decimal" && box2.getSelectedItem()=="Octal"){
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				String octal = Integer.toOctalString(val);
+				NTXT.append("d\t|q\t|r");
+				
+				int d = val*8;
+				int q = val;
+				int r = 0;
+				int eQ = 0;
+				
+				while(q>1){
+					d = d/8;
+					r = q%8;
+					q = q/8;
+					NTXT.append("\n"+d + "/8\t|" + q + "\t|" + r );
+					eQ = q;
+				}
+				NTXT.append("\n\t\t|"+eQ);
+				NTXT.append("\nDecimal: " +val);
+				NTXT.append("\nOctal: " + octal);										
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
+			}				
+		}
+		else if(box1.getSelectedItem()=="Decimal" && box2.getSelectedItem()=="Hex"){
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				String hex = Integer.toHexString(val).toUpperCase();
+				NTXT.append("d\t|q\t|r");
+				
+				int d = val*16;
+				int q = val;
+				int r = 0;
+				int eQ = 0;
+				
+				while(q>1){
+					d = d/16;
+					r = q%16;
+					q = q/16;
+					NTXT.append("\n"+d + "/16\t|" + q + "\t|" + r );
+					eQ = q;
+				}
+				NTXT.append("\n\t\t|"+eQ);
+				NTXT.append("\nDecimal: " +val);
+				NTXT.append("\nOctal: " + hex);										
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
+			}				
+		}
+		//Decimal to all is done
+		
+		//Binary to Decimal
+		else if (box1.getSelectedItem()=="Binary" && box2.getSelectedItem()=="Decimal"){
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				
+				int dNum = val;
+				int reverse = 0;
+				int i = -1;
+
+				while(val>0){
+					reverse = val%10;
+					val = val/10;
+					i++;
+					Double ans;
+
+					ans = Math.pow(reverse*2, i);
+					if (reverse==0 || reverse==0.0) {
+					ans=0.0;
+					}
+
+					NTXT.append(reverse + "x2^" + i + " = " + Math.round(ans)+"\n");
+				}
+				String temp = Integer.toString(dNum);
+				NTXT.append("\nBinary: " + dNum);
+				NTXT.append("\nDecimal: " + Integer.parseInt(temp, 2));
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
+			}
+		}
+		//Binary to Octal
+		else if (box1.getSelectedItem()=="Binary" && box2.getSelectedItem()=="Octal"){
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				NTXT.append("--> Convert it to Decimal First:\n");
+				int dNum = val;
+				int reverse = 0;
+				int i = -1;
+
+				while(val>0){
+					reverse = val%10;
+					val = val/10;
+					i++;
+					Double ans;
+
+					ans = Math.pow(reverse*2, i);
+					if (reverse==0 || reverse==0.0) {
+					ans=0.0;
+					}
+
+					NTXT.append(reverse + "x2^" + i + " = " + Math.round(ans)+"\n");
+				}
+				String temp = Integer.toString(dNum);
+				NTXT.append("\nBinary: " + dNum);
+				NTXT.append("\nDecimal: " + Integer.parseInt(temp, 2));
+				NTXT.append("\n\n-->> Now Convert it to Octal:\n");
+				
+				int newVal = Integer.parseInt(temp,2);
+				int d = newVal*8;//divident
+				int q = newVal; //quotient
+				int r = 0; //reminder
+				int eQ = 0;//the last quotient
+
+				while(q>1){
+					d = d/8;
+					r = q%8;
+					q = q/8;
+					NTXT.append(d + "/8\t|" + q + "\t|" + r +"\n");
+					eQ = q;
+				}
+				NTXT.append("\t\t|"+eQ);
+				NTXT.append("\nDecimal: "  + newVal);
+				NTXT.append("\nOctal: " + Integer.toOctalString(newVal));
+				
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
+			}
+		}			
+		//Binary to Hex
+		else if (box1.getSelectedItem()=="Binary" && box2.getSelectedItem()=="Hex"){
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				NTXT.append("--> Convert it to Decimal First:\n");
+				int dNum = val;
+				int reverse = 0;
+				int i = -1;
+
+				while(val>0){
+					reverse = val%10;
+					val = val/10;
+					i++;
+					Double ans;
+
+					ans = Math.pow(reverse*2, i);
+					if (reverse==0 || reverse==0.0) {
+					ans=0.0;
+					}
+
+					NTXT.append(reverse + "x2^" + i + " = " + Math.round(ans)+"\n");
+				}
+				String temp = Integer.toString(dNum);
+				NTXT.append("\nBinary: " + dNum);
+				NTXT.append("\nDecimal: " + Integer.parseInt(temp, 2));
+				NTXT.append("\n\n--> Now Convert it to Hex:\n");
+				
+				int newVal = Integer.parseInt(temp,2);
+				int d = newVal*16;//divident
+				int q = newVal; //quotient
+				int r = 0; //reminder
+				int eQ = 0;//the last quotient
+
+				while(q>1){
+					d = d/16;
+					r = q%16;
+					q = q/16;
+					NTXT.append(d + "/16\t|" + q + "\t|" + r +"\n");
+					eQ = q;
+				}
+				NTXT.append("\t\t|"+eQ);
+				NTXT.append("\nDecimal: "  + newVal);
+				NTXT.append("\nHex: " + Integer.toHexString(newVal).toUpperCase());
+				
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
+			}
+		}			
+		//Octal to Decimal
+		else if(box1.getSelectedItem()=="Octal" && box2.getSelectedItem()=="Decimal"){
+			try{
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				int dNum = val;
+				int reverse = 0;
+				int i = -1;
+
+				while(val>0){
+					reverse = val%10;
+					val = val/10;
+					i++;
+					Double ans;      
+					double power = Math.pow(8, i);
+					ans = reverse*power;
+
+					NTXT.append(reverse + "x8^" + i + " = " + Math.round(ans)+"\n");
+				}
+				String temp = Integer.toString(dNum);
+				NTXT.append("\nOctal: " + dNum);
+				NTXT.append("\nDecimal: " + Integer.parseInt(temp, 8));					
+			}
+			
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");				
+			}
+		}
+		//Octal to Binary
+		else if(box1.getSelectedItem()=="Octal" && box2.getSelectedItem()=="Binary"){
+			try{
+				NTXT.append("--> Convert it to Decimal First:\n");
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				int dNum = val;
+				int reverse = 0;
+				int i = -1;
+
+				while(val>0){
+					reverse = val%10;
+					val = val/10;
+					i++;
+					Double ans;
+					double power = Math.pow(8, i);
+					ans = reverse*power;
+					
+					NTXT.append(reverse + "x8^" + i + " = " + Math.round(ans)+"\n");
+				}
+				String temp = Integer.toString(dNum);
+
+				NTXT.append("\nOctal: " + dNum);
+				NTXT.append("\nDecimal: " + Integer.parseInt(temp, 8));	
+				
+				NTXT.append("\n\n--> Now Convert it to Binary:");	
+				int newVal = Integer.parseInt(temp, 8);	
+				NTXT.append("\nd\t|q\t|r\n");
+				int d = newVal*2;//divident
+				int q = newVal; //quotient
+				int r = 0; //reminder
+				int eQ = 0;//the last quotient
+
+				while(q>1){
+					d = d/2;
+					r = q%2;
+					q = q/2;
+					NTXT.append(d + "/2\t|" + q + "\t|" + r +"\n");
+					eQ = q;
+				}
+				NTXT.append("\t\t|"+eQ);
+				NTXT.append("\n\nDecimal: "  + newVal);
+				NTXT.append("\nBinary: " + Integer.toBinaryString(newVal));					
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");					
+			}				
+		}
+		//Octal to Hex
+		else if(box1.getSelectedItem()=="Octal" && box2.getSelectedItem()=="Hex"){
+			try{
+				NTXT.append("--> Convert it to Decimal First:\n");
+				String guru = JTF.getText();
+				int val = Integer.parseInt(guru);
+				int dNum = val;
+				int reverse = 0;
+				int i = -1;
+
+				while(val>0){
+					reverse = val%10;
+					val = val/10;
+					i++;
+					Double ans;
+					double power = Math.pow(8, i);
+					ans = reverse*power;
+					
+					NTXT.append(reverse + "x8^" + i + " = " + Math.round(ans)+"\n");
+				}
+				String temp = Integer.toString(dNum);
+
+				NTXT.append("\nOctal: " + dNum);
+				NTXT.append("\nDecimal: " + Integer.parseInt(temp, 8));	
+				
+				NTXT.append("\n\n--> Now Convert it to Hex:");	
+				int newVal = Integer.parseInt(temp, 8);	
+				NTXT.append("\nd\t|q\t|r\n");
+				int d = newVal*2;//divident
+				int q = newVal; //quotient
+				int r = 0; //reminder
+				int eQ = 0;//the last quotient
+
+				while(q>1){
+					d = d/16;
+					r = q%16;
+					q = q/16;
+					NTXT.append(d + "/16\t|" + q + "\t|" + r +"\n");
+					eQ = q;
+				}
+				NTXT.append("\t\t|"+eQ);
+				NTXT.append("\n\nDecimal: "  + newVal);
+				NTXT.append("\nHex: " + Integer.toHexString(newVal).toUpperCase());
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");					
+			}				
+		}
+		
+		//Hex to Decimal
+		else if(box1.getSelectedItem()=="Hex" && box2.getSelectedItem()=="Decimal"){
+			try{
+				String guru = JTF.getText().toLowerCase();
+				String val = guru;
+				int amount = 0-1;
+				long total = 0;
+
+				for(int i=val.length()-1;i>=0;i--)
+					{
+					char s2 = val.charAt(i);
+					if (s2=='a'){
+						String s3 = String.valueOf(s2);
+						s3 = "10";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*10;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='b'){
+						String s3 = String.valueOf(s2);
+						s3 = "11";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*11;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='c'){
+						String s3 = String.valueOf(s2);
+						s3 = "12";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*12;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='d'){
+						String s3 = String.valueOf(s2);
+						s3 = "13";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*13;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='e'){
+						String s3 = String.valueOf(s2);
+						s3 = "14";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*14;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
+					}
+					else if (s2=='f'){
+						String s3 = String.valueOf(s2);
+						s3 = "15";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*15;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else{
+						String s3 = String.valueOf(s2);
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*Integer.parseInt(s3);
+						total = total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
+					}  
+				}
+				JTF.setText(guru.toUpperCase());
+				NTXT.append("\nHex: " + val.toUpperCase());
+				NTXT.append("\nDecimal: "+total);
+
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");					
+			}				
+		}			
+		//Hex to Binary
+		else if(box1.getSelectedItem()=="Hex" && box2.getSelectedItem()=="Binary"){
+			try{
+				String guru = JTF.getText().toLowerCase();
+				String val = guru;
+				int amount = 0-1;
+				long total = 0;
+				NTXT.append("--> Convert it to Decimal First:\n");
+				for(int i=val.length()-1;i>=0;i--)
+					{
+					char s2 = val.charAt(i);
+					if (s2=='a'){
+						String s3 = String.valueOf(s2);
+						s3 = "10";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*10;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='b'){
+						String s3 = String.valueOf(s2);
+						s3 = "11";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*11;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='c'){
+						String s3 = String.valueOf(s2);
+						s3 = "12";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*12;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='d'){
+						String s3 = String.valueOf(s2);
+						s3 = "13";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*13;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='e'){
+						String s3 = String.valueOf(s2);
+						s3 = "14";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*14;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
+					}
+					else if (s2=='f'){
+						String s3 = String.valueOf(s2);
+						s3 = "15";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*15;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else{
+						String s3 = String.valueOf(s2);
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*Integer.parseInt(s3);
+						total = total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
+					}  
+				}
+				JTF.setText(guru.toUpperCase());
+				NTXT.append("\nHex: " + val.toUpperCase());
+				NTXT.append("\nDecimal: "+total);
+				
+				NTXT.append("\n\n--> Now Convert it to Binary:");
+				int newVal = (int)total;	
+				NTXT.append("\nd\t|q\t|r\n");
+				int d = newVal*2;//divident
+				int q = newVal; //quotient
+				int r = 0; //reminder
+				int eQ = 0;//the last quotient
+
+				while(q>1){
+					d = d/2;
+					r = q%2;
+					q = q/2;
+					NTXT.append(d + "/2\t|" + q + "\t|" + r +"\n");
+					eQ = q;
+				}
+				NTXT.append("\t\t|"+eQ);
+				NTXT.append("\n\nDecimal: "  + newVal);
+				NTXT.append("\nBinary: " + Integer.toBinaryString(newVal));					
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");					
+			}				
+		}
+		//Hex to Octal
+		else if(box1.getSelectedItem()=="Hex" && box2.getSelectedItem()=="Octal"){
+			try{
+				String guru = JTF.getText().toLowerCase();
+				String val = guru;
+				int amount = 0-1;
+				long total = 0;
+				NTXT.append("--> Convert it to Decimal First:\n");
+				for(int i=val.length()-1;i>=0;i--)
+					{
+					char s2 = val.charAt(i);
+					if (s2=='a'){
+						String s3 = String.valueOf(s2);
+						s3 = "10";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*10;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='b'){
+						String s3 = String.valueOf(s2);
+						s3 = "11";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*11;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='c'){
+						String s3 = String.valueOf(s2);
+						s3 = "12";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*12;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='d'){
+						String s3 = String.valueOf(s2);
+						s3 = "13";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*13;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else if (s2=='e'){
+						String s3 = String.valueOf(s2);
+						s3 = "14";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*14;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
+					}
+					else if (s2=='f'){
+						String s3 = String.valueOf(s2);
+						s3 = "15";
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*15;
+						total=total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
+					}
+					else{
+						String s3 = String.valueOf(s2);
+						amount++;
+						Double ans = Math.pow(16, amount);
+						Long anss = Math.round(ans)*Integer.parseInt(s3);
+						total = total+anss;
+						NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
+					}  
+				}
+				JTF.setText(guru.toUpperCase());
+				NTXT.append("\nHex: " + val.toUpperCase());
+				NTXT.append("\nDecimal: "+total);
+				
+				NTXT.append("\n\n--> Now Convert it to Octal:");
+				int newVal = (int)total;	
+				NTXT.append("\nd\t|q\t|r\n");
+				int d = newVal*8;//divident
+				int q = newVal; //quotient
+				int r = 0; //reminder
+				int eQ = 0;//the last quotient
+
+				while(q>1){
+					d = d/8;
+					r = q%8;
+					q = q/8;
+					NTXT.append(d + "/8\t|" + q + "\t|" + r +"\n");
+					eQ = q;
+				}
+				NTXT.append("\t\t|"+eQ);
+				NTXT.append("\n\nDecimal: "  + newVal);
+				NTXT.append("\nOctal: " + Integer.toOctalString(newVal));					
+			}
+			catch(Exception g){
+				NTXT.setText("Invalid Input!");				
+				JOptionPane.showMessageDialog(null, "Invalid Input!");					
+			}				
+		}
+	}
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -351,673 +1046,10 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			}												
 		}	
 		else if(e.getSource()==ConvertButt){			
-			if(valx==1 && valy==2){
-				String s = txt.getText();
-				byte[] bytes = s.getBytes();
-				StringBuilder binary = new StringBuilder();
-				for (byte b : bytes){
-					int val = b;
-					for(int i = 0;i<8;i++){
-						binary.append((val & 128)==0 ? 0 : 1);
-						val <<= 1;
-					}
-					binary.append(' ');
-				}
-				bnry.setText(""+binary+"");
-			}
-			else if(valx==2 && valy==1){
-					String input = bnry.getText();
-					
-					String raw = Arrays.stream(input.split(" "))
-						.map(binary -> Integer.parseInt(binary, 2))
-						.map(Character::toString)
-						.collect(Collectors.joining()); // cut the space
-					txt.setText(""+raw+"");		
-			}			
+			translate();
 		}	
         else if(e.getSource()==ConsButt){
-			NTXT.setText("");
-			if(box1.getSelectedItem()==box2.getSelectedItem()){
-				NTXT.setText("Converting to itself is equals to itself!");
-				
-			}
-			else if(box1.getSelectedItem()=="Decimal" && box2.getSelectedItem()=="Binary"){//Decimal to Binary
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					String binary = Integer.toBinaryString(val);
-					NTXT.append("d\t|q\t|r");
-					
-					int d = val*2;
-					int q = val;
-					int r = 0;
-					int eQ = 0;
-					
-					while(q>1){
-						d = d/2;
-						r = q%2;
-						q = q/2;
-						NTXT.append("\n"+d + "/2\t|" + q + "\t|" + r );
-						eQ = q;
-					}
-					NTXT.append("\n\t\t|"+eQ);
-					NTXT.append("\nDecimal: " +val);
-					NTXT.append("\nBinary: " + binary);										
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");
-					JOptionPane.showMessageDialog(null, "Invalid Input!");
-				}
-			}
-			//Decimal to Octal
-			else if(box1.getSelectedItem()=="Decimal" && box2.getSelectedItem()=="Octal"){
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					String octal = Integer.toOctalString(val);
-					NTXT.append("d\t|q\t|r");
-					
-					int d = val*8;
-					int q = val;
-					int r = 0;
-					int eQ = 0;
-					
-					while(q>1){
-						d = d/8;
-						r = q%8;
-						q = q/8;
-						NTXT.append("\n"+d + "/8\t|" + q + "\t|" + r );
-						eQ = q;
-					}
-					NTXT.append("\n\t\t|"+eQ);
-					NTXT.append("\nDecimal: " +val);
-					NTXT.append("\nOctal: " + octal);										
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");
-				}				
-			}
-			else if(box1.getSelectedItem()=="Decimal" && box2.getSelectedItem()=="Hex"){
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					String hex = Integer.toHexString(val).toUpperCase();
-					NTXT.append("d\t|q\t|r");
-					
-					int d = val*16;
-					int q = val;
-					int r = 0;
-					int eQ = 0;
-					
-					while(q>1){
-						d = d/16;
-						r = q%16;
-						q = q/16;
-						NTXT.append("\n"+d + "/16\t|" + q + "\t|" + r );
-						eQ = q;
-					}
-					NTXT.append("\n\t\t|"+eQ);
-					NTXT.append("\nDecimal: " +val);
-					NTXT.append("\nOctal: " + hex);										
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");
-				}				
-			}
-			//Decimal to all is done
-			
-			//Binary to Decimal
-			else if (box1.getSelectedItem()=="Binary" && box2.getSelectedItem()=="Decimal"){
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					
-					int dNum = val;
-					int reverse = 0;
-					int i = -1;
-
-					while(val>0){
-					    reverse = val%10;
-					    val = val/10;
-					    i++;
-					    Double ans;
-
-					    ans = Math.pow(reverse*2, i);
-					    if (reverse==0 || reverse==0.0) {
-						ans=0.0;
-					    }
-
-					    NTXT.append(reverse + "x2^" + i + " = " + Math.round(ans)+"\n");
-					}
-					String temp = Integer.toString(dNum);
-					NTXT.append("\nBinary: " + dNum);
-					NTXT.append("\nDecimal: " + Integer.parseInt(temp, 2));
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");
-				}
-			}
-			//Binary to Octal
-			else if (box1.getSelectedItem()=="Binary" && box2.getSelectedItem()=="Octal"){
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					NTXT.append("--> Convert it to Decimal First:\n");
-					int dNum = val;
-					int reverse = 0;
-					int i = -1;
-
-					while(val>0){
-					    reverse = val%10;
-					    val = val/10;
-					    i++;
-					    Double ans;
-
-					    ans = Math.pow(reverse*2, i);
-					    if (reverse==0 || reverse==0.0) {
-						ans=0.0;
-					    }
-
-					    NTXT.append(reverse + "x2^" + i + " = " + Math.round(ans)+"\n");
-					}
-					String temp = Integer.toString(dNum);
-					NTXT.append("\nBinary: " + dNum);
-					NTXT.append("\nDecimal: " + Integer.parseInt(temp, 2));
-					NTXT.append("\n\n-->> Now Convert it to Octal:\n");
-					
-					int newVal = Integer.parseInt(temp,2);
-					int d = newVal*8;//divident
-					int q = newVal; //quotient
-					int r = 0; //reminder
-					int eQ = 0;//the last quotient
-
-					while(q>1){
-					    d = d/8;
-					    r = q%8;
-					    q = q/8;
-					    NTXT.append(d + "/8\t|" + q + "\t|" + r +"\n");
-					    eQ = q;
-					}
-					NTXT.append("\t\t|"+eQ);
-					NTXT.append("\nDecimal: "  + newVal);
-					NTXT.append("\nOctal: " + Integer.toOctalString(newVal));
-					
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");
-				}
-			}			
-			//Binary to Hex
-			else if (box1.getSelectedItem()=="Binary" && box2.getSelectedItem()=="Hex"){
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					NTXT.append("--> Convert it to Decimal First:\n");
-					int dNum = val;
-					int reverse = 0;
-					int i = -1;
-
-					while(val>0){
-					    reverse = val%10;
-					    val = val/10;
-					    i++;
-					    Double ans;
-
-					    ans = Math.pow(reverse*2, i);
-					    if (reverse==0 || reverse==0.0) {
-						ans=0.0;
-					    }
-
-					    NTXT.append(reverse + "x2^" + i + " = " + Math.round(ans)+"\n");
-					}
-					String temp = Integer.toString(dNum);
-					NTXT.append("\nBinary: " + dNum);
-					NTXT.append("\nDecimal: " + Integer.parseInt(temp, 2));
-					NTXT.append("\n\n--> Now Convert it to Hex:\n");
-					
-					int newVal = Integer.parseInt(temp,2);
-					int d = newVal*16;//divident
-					int q = newVal; //quotient
-					int r = 0; //reminder
-					int eQ = 0;//the last quotient
-
-					while(q>1){
-					    d = d/16;
-					    r = q%16;
-					    q = q/16;
-					    NTXT.append(d + "/16\t|" + q + "\t|" + r +"\n");
-					    eQ = q;
-					}
-					NTXT.append("\t\t|"+eQ);
-					NTXT.append("\nDecimal: "  + newVal);
-					NTXT.append("\nHex: " + Integer.toHexString(newVal).toUpperCase());
-					
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");
-				}
-			}			
-			//Octal to Decimal
-			else if(box1.getSelectedItem()=="Octal" && box2.getSelectedItem()=="Decimal"){
-				try{
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					int dNum = val;
-					int reverse = 0;
-					int i = -1;
-
-					while(val>0){
-					    reverse = val%10;
-					    val = val/10;
-					    i++;
-					    Double ans;      
-					    double power = Math.pow(8, i);
-					    ans = reverse*power;
-
-					    NTXT.append(reverse + "x8^" + i + " = " + Math.round(ans)+"\n");
-					}
-					String temp = Integer.toString(dNum);
-					NTXT.append("\nOctal: " + dNum);
-					NTXT.append("\nDecimal: " + Integer.parseInt(temp, 8));					
-				}
-				
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");				
-				}
-			}
-			//Octal to Binary
-			else if(box1.getSelectedItem()=="Octal" && box2.getSelectedItem()=="Binary"){
-				try{
-					NTXT.append("--> Convert it to Decimal First:\n");
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					int dNum = val;
-					int reverse = 0;
-					int i = -1;
-
-					while(val>0){
-					    reverse = val%10;
-					    val = val/10;
-					    i++;
-					    Double ans;
-					    double power = Math.pow(8, i);
-					    ans = reverse*power;
-					    
-					    NTXT.append(reverse + "x8^" + i + " = " + Math.round(ans)+"\n");
-					}
-					String temp = Integer.toString(dNum);
-
-					NTXT.append("\nOctal: " + dNum);
-					NTXT.append("\nDecimal: " + Integer.parseInt(temp, 8));	
-					
-					NTXT.append("\n\n--> Now Convert it to Binary:");	
-					int newVal = Integer.parseInt(temp, 8);	
-					NTXT.append("\nd\t|q\t|r\n");
-					int d = newVal*2;//divident
-					int q = newVal; //quotient
-					int r = 0; //reminder
-					int eQ = 0;//the last quotient
-
-					while(q>1){
-					    d = d/2;
-					    r = q%2;
-					    q = q/2;
-					    NTXT.append(d + "/2\t|" + q + "\t|" + r +"\n");
-					    eQ = q;
-					}
-					NTXT.append("\t\t|"+eQ);
-					NTXT.append("\n\nDecimal: "  + newVal);
-					NTXT.append("\nBinary: " + Integer.toBinaryString(newVal));					
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");					
-				}				
-			}
-			//Octal to Hex
-			else if(box1.getSelectedItem()=="Octal" && box2.getSelectedItem()=="Hex"){
-				try{
-					NTXT.append("--> Convert it to Decimal First:\n");
-					String guru = JTF.getText();
-					int val = Integer.parseInt(guru);
-					int dNum = val;
-					int reverse = 0;
-					int i = -1;
-
-					while(val>0){
-					    reverse = val%10;
-					    val = val/10;
-					    i++;
-					    Double ans;
-					    double power = Math.pow(8, i);
-					    ans = reverse*power;
-					    
-					    NTXT.append(reverse + "x8^" + i + " = " + Math.round(ans)+"\n");
-					}
-					String temp = Integer.toString(dNum);
-
-					NTXT.append("\nOctal: " + dNum);
-					NTXT.append("\nDecimal: " + Integer.parseInt(temp, 8));	
-					
-					NTXT.append("\n\n--> Now Convert it to Hex:");	
-					int newVal = Integer.parseInt(temp, 8);	
-					NTXT.append("\nd\t|q\t|r\n");
-					int d = newVal*2;//divident
-					int q = newVal; //quotient
-					int r = 0; //reminder
-					int eQ = 0;//the last quotient
-
-					while(q>1){
-					    d = d/16;
-					    r = q%16;
-					    q = q/16;
-					    NTXT.append(d + "/16\t|" + q + "\t|" + r +"\n");
-					    eQ = q;
-					}
-					NTXT.append("\t\t|"+eQ);
-					NTXT.append("\n\nDecimal: "  + newVal);
-					NTXT.append("\nHex: " + Integer.toHexString(newVal).toUpperCase());
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");					
-				}				
-			}
-			
-			//Hex to Decimal
-			else if(box1.getSelectedItem()=="Hex" && box2.getSelectedItem()=="Decimal"){
-				try{
-					String guru = JTF.getText().toLowerCase();
-					String val = guru;
-					int amount = 0-1;
-					long total = 0;
-
-					for(int i=val.length()-1;i>=0;i--)
-					    {
-						char s2 = val.charAt(i);
-						if (s2=='a'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "10";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*10;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='b'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "11";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*11;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='c'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "12";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*12;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='d'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "13";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*13;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='e'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "14";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*14;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
-						}
-						else if (s2=='f'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "15";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*15;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else{
-						    String s3 = String.valueOf(s2);
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*Integer.parseInt(s3);
-						    total = total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
-						}  
-					}
-					JTF.setText(guru.toUpperCase());
-					NTXT.append("\nHex: " + val.toUpperCase());
-					NTXT.append("\nDecimal: "+total);
-
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");					
-				}				
-			}			
-			//Hex to Binary
-			else if(box1.getSelectedItem()=="Hex" && box2.getSelectedItem()=="Binary"){
-				try{
-					String guru = JTF.getText().toLowerCase();
-					String val = guru;
-					int amount = 0-1;
-					long total = 0;
-					NTXT.append("--> Convert it to Decimal First:\n");
-					for(int i=val.length()-1;i>=0;i--)
-					    {
-						char s2 = val.charAt(i);
-						if (s2=='a'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "10";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*10;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='b'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "11";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*11;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='c'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "12";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*12;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='d'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "13";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*13;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='e'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "14";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*14;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
-						}
-						else if (s2=='f'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "15";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*15;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else{
-						    String s3 = String.valueOf(s2);
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*Integer.parseInt(s3);
-						    total = total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
-						}  
-					}
-					JTF.setText(guru.toUpperCase());
-					NTXT.append("\nHex: " + val.toUpperCase());
-					NTXT.append("\nDecimal: "+total);
-					
-					NTXT.append("\n\n--> Now Convert it to Binary:");
-					int newVal = (int)total;	
-					NTXT.append("\nd\t|q\t|r\n");
-					int d = newVal*2;//divident
-					int q = newVal; //quotient
-					int r = 0; //reminder
-					int eQ = 0;//the last quotient
-
-					while(q>1){
-					    d = d/2;
-					    r = q%2;
-					    q = q/2;
-					    NTXT.append(d + "/2\t|" + q + "\t|" + r +"\n");
-					    eQ = q;
-					}
-					NTXT.append("\t\t|"+eQ);
-					NTXT.append("\n\nDecimal: "  + newVal);
-					NTXT.append("\nBinary: " + Integer.toBinaryString(newVal));					
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");					
-				}				
-			}
-			//Hex to Octal
-			else if(box1.getSelectedItem()=="Hex" && box2.getSelectedItem()=="Octal"){
-				try{
-					String guru = JTF.getText().toLowerCase();
-					String val = guru;
-					int amount = 0-1;
-					long total = 0;
-					NTXT.append("--> Convert it to Decimal First:\n");
-					for(int i=val.length()-1;i>=0;i--)
-					    {
-						char s2 = val.charAt(i);
-						if (s2=='a'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "10";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*10;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='b'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "11";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*11;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='c'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "12";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*12;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='d'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "13";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*13;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else if (s2=='e'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "14";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*14;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
-						}
-						else if (s2=='f'){
-						    String s3 = String.valueOf(s2);
-						    s3 = "15";
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*15;
-						    total=total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss+"\n");
-						}
-						else{
-						    String s3 = String.valueOf(s2);
-						    amount++;
-						    Double ans = Math.pow(16, amount);
-						    Long anss = Math.round(ans)*Integer.parseInt(s3);
-						    total = total+anss;
-						    NTXT.append(s3+"x16^"+amount+"="+anss + "\n");
-						}  
-					}
-					JTF.setText(guru.toUpperCase());
-					NTXT.append("\nHex: " + val.toUpperCase());
-					NTXT.append("\nDecimal: "+total);
-					
-					NTXT.append("\n\n--> Now Convert it to Octal:");
-					int newVal = (int)total;	
-					NTXT.append("\nd\t|q\t|r\n");
-					int d = newVal*8;//divident
-					int q = newVal; //quotient
-					int r = 0; //reminder
-					int eQ = 0;//the last quotient
-
-					while(q>1){
-					    d = d/8;
-					    r = q%8;
-					    q = q/8;
-					    NTXT.append(d + "/8\t|" + q + "\t|" + r +"\n");
-					    eQ = q;
-					}
-					NTXT.append("\t\t|"+eQ);
-					NTXT.append("\n\nDecimal: "  + newVal);
-					NTXT.append("\nOctal: " + Integer.toOctalString(newVal));					
-				}
-				catch(Exception g){
-					NTXT.setText("Invalid Input!");				
-					JOptionPane.showMessageDialog(null, "Invalid Input!");					
-				}				
-			}			
+			convv();
 		}
     }
 
@@ -1352,12 +1384,14 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
             BaseX.addMouseListener(this);
             SCAN_BOX.add(BaseX);
             */
-            SCAN_INPUT = new JTextField();
+            SCAN_INPUT = new JTextField("10");
             SCAN_INPUT.setBounds(5,7, SCREEN_WIDTH-200-5-5-100+30+100+5,30);
             SCAN_INPUT.setBackground(Color.decode("#40434b"));
             SCAN_INPUT.setForeground(Color.white);
             SCAN_INPUT.setCaretColor(Color.WHITE);
             SCAN_BOX.add(SCAN_INPUT);
+
+			convert_it();
 
             Convert = new JButton("Convert");
             Convert.setBounds(SCREEN_WIDTH-60-100-5,7,100,30);
@@ -1462,7 +1496,7 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			van2.add(box2);	
 				
 			//TextField
-			JTF = new JTextField();
+			JTF = new JTextField("10");
 			//SCREEN_HEIGHT-30-25-10-5-5
 			JTF.setBounds(5,7, SCREEN_WIDTH-200-5-5-100+30+100+5,30);
 			JTF.setBackground(Color.decode("#40434b"));
@@ -1470,6 +1504,8 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			JTF.setCaretColor(Color.WHITE);
 			//JTF.setFont(new Font("Arial", Font.PLAIN, 30));
 			van1.add(JTF);
+
+			//convv();
 
 			//Convert Button
 			ConsButt = new JButton("Solve");	
@@ -1495,6 +1531,8 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			NSP = new JScrollPane(NTXT);
 			NSP.setBounds(5,35,SCREEN_WIDTH-MENU_BUTTON_SIZE-10,600-50-10-10);
 			ACTIVITY_AREA.add(NSP);
+
+			convv();
         }
         else if (activity_attribute==2) {
             cleanup();
@@ -1539,13 +1577,13 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			PText.setPreferredSize(new Dimension(360,200));
 			Tab1.add(PText);
 			
-			txt = new JTextArea(" ",0,0);
+			txt = new JTextArea("",0,0);
 			txt.setBounds(20, 100, 300, 300);  
 			//txt.setFont(new Font("Calibri", Font.BOLD, 25));
 			txt.setBackground(Color.decode("#36383f"));
 			txt.setForeground(Color.white);
 			txt.setLineWrap(true);
-			txt.setText("");
+			txt.setText("Text converts to binary");
 			
 			scroll = new JScrollPane(txt);
 			scroll.setBounds(0,0,(SCREEN_WIDTH-MENU_BUTTON_SIZE)/2,579);
@@ -1587,6 +1625,7 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			swapButt.setForeground(Color.white);
 			swapButt.setFocusable(false);
 			swapButt.addActionListener(this);
+			swapButt.addMouseListener(this);
 			Tab3.add(swapButt);
 			
 			//Un-nessessary line
@@ -1609,6 +1648,7 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			ConvertButt.addActionListener(this);
 			ConvertButt.setBackground(Color.decode("#36383f"));
 			ConvertButt.setForeground(Color.white);
+			ConvertButt.addMouseListener(this);
 			Tab3.add(ConvertButt);
 			
 			//default
@@ -1616,6 +1656,8 @@ class App extends JFrame implements ActionListener, MouseListener, KeyListener{
 			bnry.setEditable(false);
 
             universal_line();
+
+			translate();
         }
         else if (activity_attribute==3) {
             cleanup();
